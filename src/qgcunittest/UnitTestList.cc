@@ -30,7 +30,6 @@
 #include "TCPLinkTest.h"
 #include "ParameterManagerTest.h"
 #include "MissionCommandTreeTest.h"
-#include "LogDownloadTest.h"
 #include "SendMavCommandTest.h"
 #include "VisualMissionItemTest.h"
 #include "CameraSectionTest.h"
@@ -61,7 +60,6 @@ UT_REGISTER_TEST(TCPLinkTest)
 UT_REGISTER_TEST(FileManagerTest)
 UT_REGISTER_TEST(ParameterManagerTest)
 UT_REGISTER_TEST(MissionCommandTreeTest)
-UT_REGISTER_TEST(LogDownloadTest)
 UT_REGISTER_TEST(SendMavCommandTest)
 UT_REGISTER_TEST(SurveyComplexItemTest)
 UT_REGISTER_TEST(CameraSectionTest)

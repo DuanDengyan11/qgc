@@ -36,7 +36,6 @@ QGroundControlQmlGlobal::QGroundControlQmlGlobal(QGCApplication* app, QGCToolbox
     , _qgcPositionManager(NULL)
     , _missionCommandTree(NULL)
     , _videoManager(NULL)
-    , _mavlinkLogManager(NULL)
     , _corePlugin(NULL)
     , _firmwarePluginManager(NULL)
     , _settingsManager(NULL)
@@ -72,7 +71,6 @@ void QGroundControlQmlGlobal::setToolbox(QGCToolbox* toolbox)
     _qgcPositionManager     = toolbox->qgcPositionManager();
     _missionCommandTree     = toolbox->missionCommandTree();
     _videoManager           = toolbox->videoManager();
-    _mavlinkLogManager      = toolbox->mavlinkLogManager();
     _corePlugin             = toolbox->corePlugin();
     _firmwarePluginManager  = toolbox->firmwarePluginManager();
     _settingsManager        = toolbox->settingsManager();

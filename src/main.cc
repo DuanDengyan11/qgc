@@ -224,6 +224,10 @@ int main(int argc, char *argv[])
     //-- Initialize Cache System
     getQGCMapEngine()->init();
 
+    QTranslator translator;
+    translator.load(":/translation/zh_en.qm");
+    app->installTranslator(&translator);
+
     int exitCode = 0;
 
 #ifdef UNITTEST_BUILD

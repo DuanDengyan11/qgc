@@ -46,7 +46,7 @@
         <file alias="Airframe/HelicopterCoaxial">src/AutoPilotPlugins/Common/Images/HelicopterCoaxial.svg</file>
         <file alias="wifi.svg">src/AutoPilotPlugins/Common/Images/wifi.svg</file>
         <file alias="arrow-down.png">src/QmlControls/arrow-down.png</file>
-		<file alias="camera.svg">resources/camera.svg</file>
+        <file alias="camera.svg">resources/camera.svg</file>
         <file alias="camera_photo.svg">src/Camera/images/camera_photo.svg</file>
         <file alias="camera_video.svg">src/Camera/images/camera_video.svg</file>
         <file alias="check.png">src/QmlControls/check.png</file>
@@ -58,8 +58,6 @@
         <file alias="DatalinkLossLight.svg">src/AutoPilotPlugins/PX4/Images/DatalinkLossLight.svg</file>
         <file alias="GeoFence.svg">src/AutoPilotPlugins/PX4/Images/GeoFence.svg</file>
         <file alias="GeoFenceLight.svg">src/AutoPilotPlugins/PX4/Images/GeoFenceLight.svg</file>
-        <file alias="GeoTagIcon">src/AnalyzeView/GeoTagIcon.svg</file>
-        <file alias="MavlinkConsoleIcon">src/AnalyzeView/MavlinkConsoleIcon.svg</file>
         <file alias="LandMode.svg">src/AutoPilotPlugins/PX4/Images/LandMode.svg</file>
         <file alias="LandModeCopter.svg">src/AutoPilotPlugins/PX4/Images/LandModeCopter.svg</file>
         <file alias="LightsComponentIcon.png">src/AutoPilotPlugins/APM/Images/LightsComponentIcon.png</file>
@@ -69,7 +67,6 @@
         <file alias="Frames/Vectored6DOF.png">src/AutoPilotPlugins/APM/Images/vectored6dof-frame.png</file>
         <file alias="Frames/SimpleROV-3.png">src/AutoPilotPlugins/APM/Images/simple3-frame.png</file>
         <file alias="Frames/SimpleROV-4.png">src/AutoPilotPlugins/APM/Images/simple4-frame.png</file>
-        <file alias="LogDownloadIcon">src/AnalyzeView/LogDownloadIcon.svg</file>
         <file alias="LowBattery.svg">src/AutoPilotPlugins/PX4/Images/LowBattery.svg</file>
         <file alias="LowBatteryLight.svg">src/AutoPilotPlugins/PX4/Images/LowBatteryLight.svg</file>
         <file alias="MotorComponentIcon.svg">src/AutoPilotPlugins/Common/Images/MotorComponentIcon.svg</file>
@@ -142,7 +139,6 @@
         <file alias="Disarmed.svg">src/ui/toolbar/Images/Disarmed.svg</file>
         <file alias="Disconnect.svg">src/ui/toolbar/Images/Disconnect.svg</file>
         <file alias="Gears.svg">src/ui/toolbar/Images/Gears.svg</file>
-        <file alias="Analyze.svg">src/ui/toolbar/Images/Analyze.svg</file>
         <file alias="Gps.svg">src/ui/toolbar/Images/Gps.svg</file>
         <file alias="RTK.svg">src/ui/toolbar/Images/RTK.svg</file>
         <file alias="Hamburger.svg">src/ui/toolbar/Images/Hamburger.svg</file>
@@ -194,8 +190,7 @@
         <file alias="Play">resources/Play.svg</file>
         <file alias="PowerButton">resources/PowerButton.svg</file>
         <file alias="QGCLogoBlack">resources/QGCLogoBlack.svg</file>
-		<file alias="QGCLogoFull">resources/QGCLogoFull.svg</file>
-        <file alias="QGCLogoWhite">resources/QGCLogoWhite.svg</file>
+        <file alias="QGCLogoFull">resources/QGCLogoFull.svg</file>
         <file alias="QGroundControlConnect">resources/QGroundControlConnect.svg</file>
         <file alias="rtl.svg">resources/rtl.svg</file>
         <file alias="SplashScreen">resources/SplashScreen.png</file>
@@ -327,5 +322,8 @@
         <file alias="joystickThrottleUp.png">resources/calibration/joystick/mode4/joystickThrottleUp.png</file>
         <file alias="joystickYawLeft.png">resources/calibration/joystick/mode4/joystickYawLeft.png</file>
         <file alias="joystickYawRight.png">resources/calibration/joystick/mode4/joystickYawRight.png</file>
+    </qresource>
+    <qresource prefix="/translation">
+        <file alias="zh_en.qm">localization/zh_en.qm</file>
     </qresource>
 </RCC>

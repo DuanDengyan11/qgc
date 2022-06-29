@@ -21,7 +21,6 @@ Rectangle {
     id:                 _linkRoot
     color:              qgcPal.window
     anchors.fill:       parent
-    anchors.margins:    ScreenTools.defaultFontPixelWidth
 
     property var _currentSelection: null
     property int _firstColumn:      ScreenTools.defaultFontPixelWidth * 12

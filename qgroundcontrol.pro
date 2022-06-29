@@ -72,7 +72,7 @@ LinuxBuild {
 }
 
 WindowsBuild {
-    RC_ICONS = resources/icons/qgroundcontrol.ico
+    RC_ICONS = resources/icons/amovlab.ico#resources/icons/qgroundcontrol.ico
 }
 
 #
@@ -331,7 +331,6 @@ INCLUDEPATH += \
     include/ui \
     src \
     src/api \
-    src/AnalyzeView \
     src/Camera \
     src/AutoPilotPlugins \
     src/FlightDisplay \
@@ -413,7 +412,6 @@ DebugBuild { PX4FirmwarePlugin { PX4FirmwarePluginFactory  { APMFirmwarePlugin {
         src/qgcunittest
 
     HEADERS += \
-        src/AnalyzeView/LogDownloadTest.h \
         src/Audio/AudioOutputTest.h \
         src/FactSystem/FactSystemTestBase.h \
         src/FactSystem/FactSystemTestGeneric.h \
@@ -454,7 +452,6 @@ DebugBuild { PX4FirmwarePlugin { PX4FirmwarePluginFactory  { APMFirmwarePlugin {
         src/Vehicle/SendMavCommandTest.h \
 
     SOURCES += \
-        src/AnalyzeView/LogDownloadTest.cc \
         src/Audio/AudioOutputTest.cc \
         src/FactSystem/FactSystemTestBase.cc \
         src/FactSystem/FactSystemTestGeneric.cc \
@@ -499,10 +496,6 @@ DebugBuild { PX4FirmwarePlugin { PX4FirmwarePluginFactory  { APMFirmwarePlugin {
 # Main QGC Headers and Source files
 
 HEADERS += \
-    src/AnalyzeView/ExifParser.h \
-    src/AnalyzeView/LogDownloadController.h \
-    src/AnalyzeView/PX4LogParser.h \
-    src/AnalyzeView/ULogParser.h \
     src/Audio/AudioOutput.h \
     src/Camera/QGCCameraControl.h \
     src/Camera/QGCCameraIO.h \
@@ -592,7 +585,6 @@ HEADERS += \
     src/Settings/VideoSettings.h \
     src/Terrain/TerrainQuery.h \
     src/TerrainTile.h \
-    src/Vehicle/MAVLinkLogManager.h \
     src/VehicleSetup/JoystickConfigController.h \
     src/comm/LinkConfiguration.h \
     src/comm/LinkInterface.h \
@@ -639,8 +631,6 @@ HEADERS += \
 
 !MobileBuild {
 HEADERS += \
-    src/AnalyzeView/GeoTagController.h \
-    src/AnalyzeView/MavlinkConsoleController.h \
     src/GPS/Drivers/src/gps_helper.h \
     src/GPS/Drivers/src/ubx.h \
     src/GPS/GPSManager.h \
@@ -684,6 +674,7 @@ HEADERS += \
     src/ui/linechart/ScrollZoomer.h \
     src/ui/linechart/Scrollbar.h \
     src/ui/uas/QGCUnconnectedInfoWidget.h \
+
 }
 
 iOSBuild {
@@ -697,10 +688,6 @@ AndroidBuild {
 }
 
 SOURCES += \
-    src/AnalyzeView/ExifParser.cc \
-    src/AnalyzeView/LogDownloadController.cc \
-    src/AnalyzeView/PX4LogParser.cc \
-    src/AnalyzeView/ULogParser.cc \
     src/Audio/AudioOutput.cc \
     src/Camera/QGCCameraControl.cc \
     src/Camera/QGCCameraIO.cc \
@@ -786,7 +773,6 @@ SOURCES += \
     src/Settings/VideoSettings.cc \
     src/Terrain/TerrainQuery.cc \
     src/TerrainTile.cc\
-    src/Vehicle/MAVLinkLogManager.cc \
     src/VehicleSetup/JoystickConfigController.cc \
     src/comm/LinkConfiguration.cc \
     src/comm/LinkInterface.cc \
@@ -820,8 +806,6 @@ contains(DEFINES, QGC_ENABLE_BLUETOOTH) {
 
 !MobileBuild {
 SOURCES += \
-    src/AnalyzeView/GeoTagController.cc \
-    src/AnalyzeView/MavlinkConsoleController.cc \
     src/GPS/Drivers/src/gps_helper.cpp \
     src/GPS/Drivers/src/ubx.cpp \
     src/GPS/GPSManager.cc \
@@ -1132,3 +1116,33 @@ contains (CONFIG, QGC_DISABLE_BUILD_SETUP) {
 #
 
 include(QGCInstaller.pri)
+
+TRANSLATIONS += localization/zh_en.ts
+lupdate_only{
+    SOURCES+= \
+        src/ \
+        src/*.cc \
+        src/Vehicle/*.cc \
+        src/FlightDisplay/*.qml \
+        src/ui/*.qml \
+        src/ViewWidgets/*.cc \
+        src/ui/toolbar/*.cc \
+        src/ui/linechart/*.cc \
+        src/ui/preferences/*.cc \
+        src/PlanView/*.qml \
+        src/QmlControls/*.qml \
+        src/Settings/*.cc \
+        src/VehicleSetup/*.qml \
+        src/VehicleSetup/*.cc \
+        src/AutoPilotPlugins/Common/*.qml \
+        src/comm/*.cc \
+        src/FlightMap/Widgets/*.qml \
+        src/FlightMap/MapItems/*.qml \
+        src/AutoPilotPlugins/PX4/*.qml \
+        src/AutoPilotPlugins/APM/*.qml \
+        src/ui/preferences/*.qml \
+        src/ui/toolbar/*.qml \
+        src/ui/*.cc \
+}
+DISTFILES += \
+    src/FlightMap/MapItems/VehicleMapItems.qml

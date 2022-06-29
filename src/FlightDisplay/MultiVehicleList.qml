@@ -48,27 +48,100 @@ Item {
             anchors.left:       parent.left
             anchors.right:      parent.right
             spacing:            _margin
-
             QGCLabel {
                 anchors.left:   parent.left
                 anchors.right:  parent.right
-                text:           qsTr("The following commands will be applied to all vehicles")
+                text:           qsTr("The following commands will be applied to selected vehicles")
                 color:          _textColor
                 wrapMode:       Text.WordWrap
                 font.pointSize: ScreenTools.smallFontPointSize
             }
+            Row{
+                spacing:        _margin
+                QGCCheckBox{
+                    id:         selectedAll
+                    checked:    false
+                    onCheckedChanged:{
+                        if(checked){
+                            guidedActionsController.selectedVehicleCtl(0 , 1)
+                        }else{
+                            guidedActionsController.selectedVehicleCtl(0 , 0)
+                        }
+                    }
+                }
+
+                QGCLabel {
+                    text:           qsTr("all")
+                    color:          _textColor
+                    wrapMode:       Text.WordWrap
+                    font.pointSize: ScreenTools.smallFontPointSize
+                }
+
+            }
+
+            Row{
+                spacing:            _margin
+                QGCButton {
+                    text:       qsTr("arm")
+                    onClicked:  {
+                        guidedActionsController.confirmAction(guidedActionsController.actionMVArm)
+                    }
+                }
+                QGCButton {
+                    text:       qsTr("disarm")
+                    onClicked:  {
+                        guidedActionsController.confirmAction(guidedActionsController.actionMVDisarm)
+                    }
+                }
+                QGCButton {
+                    text:       qsTr("EmergencyStop")
+                    onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionMVEmergencyStop)
+                }
+
+            }
+
+            Row{
+                spacing:            _margin
+                QGCButton {
+                    text:       qsTr("Takeoff")
+                    onClicked:  {
+                        guidedActionsController.confirmAction(guidedActionsController.actionMVTakeoff)
+                    }
+                }
+                QGCButton {
+                    text:       qsTr("Land")
+                    onClicked:{
+                        guidedActionsController.confirmAction(guidedActionsController.actionMVLand)
+                        }
+                }
+                QGCButton {
+                    text:       qsTr("RTL")
+                    onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionMVRTL)
+                }
+            }
 
             Row {
                 spacing:            _margin
-
                 QGCButton {
-                    text:       "Pause"
+                    text:       qsTr("Pause")
                     onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionMVPause)
                 }
 
                 QGCButton {
-                    text:       "Start Mision"
+                    text:       qsTr("Mission")
                     onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionMVStartMission)
+                }
+            }
+            Row {
+                spacing:            _margin
+                QGCButton {
+                    text:       qsTr("SlingTakeoff")
+                    onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionSlingTakeoff)
+                }
+
+                QGCButton {
+                    text:       qsTr("SlingGuided")
+                    onClicked:  guidedActionsController.confirmAction(guidedActionsController.actionSlingGuided)
                 }
             }
         }
@@ -109,6 +182,22 @@ Item {
                 RowLayout {
                     Layout.fillWidth:       true
 
+                    QGCCheckBox{
+                        id: singleSelector
+                        onCheckedChanged:{
+                            if(checked)
+                                guidedActionsController.selectedVehicleCtl(_vehicle.id , 1)
+                            else
+                                guidedActionsController.selectedVehicleCtl(_vehicle.id , 0)
+                        }
+
+                        Connections{
+                            target:  selectedAll
+                            onCheckedChanged:{
+                                singleSelector.checked = selectedAll.checked
+                            }
+                        }
+                    }
                     QGCLabel {
                         Layout.alignment:   Qt.AlignTop
                         text:               _vehicle.id

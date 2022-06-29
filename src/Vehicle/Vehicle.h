@@ -376,6 +376,19 @@ public:
 
     ~Vehicle();
 
+    static quint16 connectedVehicleCount;
+    static QList<QColor> trajectoryColors;
+    //Map connect seq to vehicle's id,first is vehicle's id and second is connected seq
+    static QMap<int, int>   vehicleIdAndConnectedSeq;
+    static double gpsSlingx, gpsSlingy, gpsSlingz, headingSling;
+    static double missionSlingx, missionSlingy, missionSlingz;
+    double yaw_sling;
+    static int mission_number;
+    double distance_tolerate = 1.0;
+
+    double alpha_cable = 45 * M_PI /180;
+    double length_cable = 5.0;
+
     /// Sensor bits from sensors*Bits properties
     enum MavlinkSysStatus {
         SysStatusSensor3dGyro =                 MAV_SYS_STATUS_SENSOR_3D_GYRO,
@@ -417,6 +430,7 @@ public:
     Q_PROPERTY(QStringList          flightModes             READ flightModes                                            NOTIFY flightModesChanged)
     Q_PROPERTY(QString              flightMode              READ flightMode             WRITE setFlightMode             NOTIFY flightModeChanged)
     Q_PROPERTY(bool                 hilMode                 READ hilMode                WRITE setHilMode                NOTIFY hilModeChanged)
+    Q_PROPERTY(QColor               trajectoryColor         READ trajectoryColor                                        CONSTANT)
     Q_PROPERTY(QmlObjectListModel*  trajectoryPoints        READ trajectoryPoints                                       CONSTANT)
     Q_PROPERTY(QmlObjectListModel*  cameraTriggerPoints     READ cameraTriggerPoints                                    CONSTANT)
     Q_PROPERTY(float                latitude                READ latitude                                               NOTIFY coordinateChanged)
@@ -577,6 +591,11 @@ public:
     /// Command vehicle to move to specified location (altitude is included and relative)
     Q_INVOKABLE void guidedModeGotoLocation(const QGeoCoordinate& gotoCoord);
 
+    Q_INVOKABLE bool my_sling1(void);
+    Q_INVOKABLE bool my_sling2(void);
+    Q_INVOKABLE bool get_mission(void);
+    Q_INVOKABLE void get_gps_initial(void);
+
     /// Command vehicle to change altitude
     ///     @param altitudeChange If > 0, go up by amount specified, if < 0, go down by amount specified
     Q_INVOKABLE void guidedModeChangeAltitude(double altitudeChange);
@@ -719,6 +738,7 @@ public:
     QString prearmError(void) const { return _prearmError; }
     void setPrearmError(const QString& prearmError);
 
+    QColor trajectoryColor();
     QmlObjectListModel* trajectoryPoints(void) { return &_mapTrajectoryList; }
     QmlObjectListModel* cameraTriggerPoints(void) { return &_cameraTriggerPoints; }
     QmlObjectListModel* adsbVehicles(void) { return &_adsbVehicles; }
@@ -1336,5 +1356,4 @@ private:
     static const char* _settingsGroup;
     static const char* _joystickModeSettingsKey;
     static const char* _joystickEnabledSettingsKey;
-
 };

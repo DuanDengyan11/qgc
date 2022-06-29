@@ -68,7 +68,6 @@
 #include "VideoManager.h"
 #include "VideoSurface.h"
 #include "VideoReceiver.h"
-#include "LogDownloadController.h"
 #include "ValuesWidgetController.h"
 #include "AppMessages.h"
 #include "SimulatedPosition.h"
@@ -96,8 +95,6 @@
 #include "QGCMessageBox.h"
 #include "FirmwareUpgradeController.h"
 #include "MainWindow.h"
-#include "GeoTagController.h"
-#include "MavlinkConsoleController.h"
 #endif
 
 #ifdef QGC_RTLAB_ENABLED
@@ -387,7 +384,6 @@ void QGCApplication::_initCommon(void)
     qmlRegisterType<QGCFileDialogController>        ("QGroundControl.Controllers", 1, 0, "QGCFileDialogController");
     qmlRegisterType<RCChannelMonitorController>     ("QGroundControl.Controllers", 1, 0, "RCChannelMonitorController");
     qmlRegisterType<JoystickConfigController>       ("QGroundControl.Controllers", 1, 0, "JoystickConfigController");
-    qmlRegisterType<LogDownloadController>          ("QGroundControl.Controllers", 1, 0, "LogDownloadController");
     qmlRegisterType<SyslinkComponentController>     ("QGroundControl.Controllers", 1, 0, "SyslinkComponentController");
     qmlRegisterType<EditPositionDialogController>   ("QGroundControl.Controllers", 1, 0, "EditPositionDialogController");
     qmlRegisterType<QGCMapCircle>                   ("QGroundControl.FlightMap",   1, 0, "QGCMapCircle");
@@ -395,8 +391,6 @@ void QGCApplication::_initCommon(void)
     qmlRegisterType<ViewWidgetController>           ("QGroundControl.Controllers", 1, 0, "ViewWidgetController");
     qmlRegisterType<CustomCommandWidgetController>  ("QGroundControl.Controllers", 1, 0, "CustomCommandWidgetController");
     qmlRegisterType<FirmwareUpgradeController>      ("QGroundControl.Controllers", 1, 0, "FirmwareUpgradeController");
-    qmlRegisterType<GeoTagController>               ("QGroundControl.Controllers", 1, 0, "GeoTagController");
-    qmlRegisterType<MavlinkConsoleController>       ("QGroundControl.Controllers", 1, 0, "MavlinkConsoleController");
 #endif
 
     // Register Qml Singletons

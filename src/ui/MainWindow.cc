@@ -26,7 +26,7 @@
 #include <QDockWidget>
 #include <QMenuBar>
 #include <QDialog>
-
+#include <QObject>
 #include "QGC.h"
 #include "MAVLinkProtocol.h"
 #include "MainWindow.h"
@@ -76,7 +76,7 @@ static const char *rgDockWidgetNames[] = {
     "Custom Command",
     "Onboard Files",
     "HIL Config",
-    "Analyze"
+    "Analyze",
 };
 
 #define ARRAY_SIZE(ARRAY) (sizeof(ARRAY) / sizeof(ARRAY[0]))
@@ -147,7 +147,6 @@ MainWindow::MainWindow()
 
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
     _mainQmlWidgetHolder->setContextPropertyObject("controller", this);
-    _mainQmlWidgetHolder->setContextPropertyObject("debugMessageModel", AppMessages::getModel());
     _mainQmlWidgetHolder->setSource(QUrl::fromUserInput("qrc:qml/MainWindowHybrid.qml"));
 
     // Image provider

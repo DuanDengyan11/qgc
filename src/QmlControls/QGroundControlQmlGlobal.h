@@ -49,7 +49,6 @@ public:
     Q_PROPERTY(QGCPositionManager*  qgcPositionManger   READ qgcPositionManger      CONSTANT)
     Q_PROPERTY(MissionCommandTree*  missionCommandTree  READ missionCommandTree     CONSTANT)
     Q_PROPERTY(VideoManager*        videoManager        READ videoManager           CONSTANT)
-    Q_PROPERTY(MAVLinkLogManager*   mavlinkLogManager   READ mavlinkLogManager      CONSTANT)
     Q_PROPERTY(QGCCorePlugin*       corePlugin          READ corePlugin             CONSTANT)
     Q_PROPERTY(SettingsManager*     settingsManager     READ settingsManager        CONSTANT)
     Q_PROPERTY(FactGroup*           gpsRtk              READ gpsRtkFactGroup        CONSTANT)
@@ -115,18 +114,6 @@ public:
 
     QString appSettingsAreaUnitsString(void) const { return FactMetaData::appSettingsAreaUnitsString(); }
 
-    /// Returns the list of available logging category names.
-    Q_INVOKABLE QStringList loggingCategories(void) const { return QGCLoggingCategoryRegister::instance()->registeredCategories(); }
-
-    /// Turns on/off logging for the specified category. State is saved in app settings.
-    Q_INVOKABLE void setCategoryLoggingOn(const QString& category, bool enable) { QGCLoggingCategoryRegister::instance()->setCategoryLoggingOn(category, enable); }
-
-    /// Returns true if logging is turned on for the specified category.
-    Q_INVOKABLE bool categoryLoggingOn(const QString& category) { return QGCLoggingCategoryRegister::instance()->categoryLoggingOn(category); }
-
-    /// Updates the logging filter rules after settings have changed
-    Q_INVOKABLE void updateLoggingFilterRules(void) { QGCLoggingCategoryRegister::instance()->setFilterRulesFromSettings(QString()); }
-
     Q_INVOKABLE bool linesIntersect(QPointF xLine1, QPointF yLine1, QPointF xLine2, QPointF yLine2);
 
     // Property accesors
@@ -138,7 +125,6 @@ public:
     QGCPositionManager*     qgcPositionManger   ()  { return _qgcPositionManager; }
     MissionCommandTree*     missionCommandTree  ()  { return _missionCommandTree; }
     VideoManager*           videoManager        ()  { return _videoManager; }
-    MAVLinkLogManager*      mavlinkLogManager   ()  { return _mavlinkLogManager; }
     QGCCorePlugin*          corePlugin          ()  { return _corePlugin; }
     SettingsManager*        settingsManager     ()  { return _settingsManager; }
     FactGroup*              gpsRtkFactGroup     ()  { return &_gpsRtkFactGroup; }
@@ -197,7 +183,6 @@ private:
     QGCPositionManager*     _qgcPositionManager;
     MissionCommandTree*     _missionCommandTree;
     VideoManager*           _videoManager;
-    MAVLinkLogManager*      _mavlinkLogManager;
     QGCCorePlugin*          _corePlugin;
     FirmwarePluginManager*  _firmwarePluginManager;
     SettingsManager*        _settingsManager;

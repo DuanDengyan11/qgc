@@ -44,7 +44,7 @@ double      MockLink::_defaultVehicleLatitude =     47.6333022928789;
 double      MockLink::_defaultVehicleLongitude =    -122.08833157994995;
 double      MockLink::_defaultVehicleAltitude =     19.0;
 #endif
-int         MockLink::_nextVehicleSystemId =        128;
+int         MockLink::_nextVehicleSystemId =        1;
 const char* MockLink::_failParam =                  "COM_FLTMODE6";
 
 const char* MockConfiguration::_firmwareTypeKey =   "FirmwareType";
@@ -1010,15 +1010,16 @@ void MockLink::_sendGpsRawInt(void)
 {
     static uint64_t timeTick = 0;
     mavlink_message_t msg;
-
+    static float offset = 0.0;
+    offset = offset + 0.000001;
     mavlink_msg_gps_raw_int_pack_chan(_vehicleSystemId,
                                       _vehicleComponentId,
                                       _mavlinkChannel,
                                       &msg,
                                       timeTick++,                            // time since boot
                                       3,                                     // 3D fix
-                                      (int32_t)(_vehicleLatitude  * 1E7),
-                                      (int32_t)(_vehicleLongitude * 1E7),
+                                      (int32_t)((_vehicleLatitude + offset)  * 1E7),
+                                      (int32_t)((_vehicleLongitude + offset) * 1E7),
                                       (int32_t)(_vehicleAltitude  * 1000),
                                       UINT16_MAX, UINT16_MAX,                // HDOP/VDOP not known
                                       UINT16_MAX,                            // velocity not known

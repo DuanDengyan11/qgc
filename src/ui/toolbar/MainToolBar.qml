@@ -27,19 +27,14 @@ Rectangle {
 
     property var  _activeVehicle:  QGroundControl.multiVehicleManager.activeVehicle
 
-    signal showSettingsView
     signal showSetupView
     signal showPlanView
     signal showFlyView
-    signal showAnalyzeView
     signal armVehicle
     signal disarmVehicle
     signal vtolTransitionToFwdFlight
     signal vtolTransitionToMRFlight
-
-    function checkSettingsButton() {
-        settingsButton.checked = true
-    }
+    signal addDeleteLink
 
     function checkSetupButton() {
         setupButton.checked = true
@@ -53,9 +48,6 @@ Rectangle {
         flyButton.checked = true
     }
 
-    function checkAnalyzeButton() {
-        analyzeButton.checked = true
-    }
 
     Component.onCompleted: {
         //-- TODO: Get this from the actual state
@@ -88,17 +80,6 @@ Rectangle {
             ExclusiveGroup { id: mainActionGroup }
 
             QGCToolBarButton {
-                id:                 settingsButton
-                anchors.top:        parent.top
-                anchors.bottom:     parent.bottom
-                exclusiveGroup:     mainActionGroup
-                source:             "/res/QGCLogoWhite"
-                logo:               true
-                onClicked:          toolBar.showSettingsView()
-                visible:            !QGroundControl.corePlugin.options.combineSettingsAndSetup
-            }
-
-            QGCToolBarButton {
                 id:                 setupButton
                 anchors.top:        parent.top
                 anchors.bottom:     parent.bottom
@@ -123,16 +104,6 @@ Rectangle {
                 exclusiveGroup:     mainActionGroup
                 source:             "/qmlimages/PaperPlane.svg"
                 onClicked:          toolBar.showFlyView()
-            }
-
-            QGCToolBarButton {
-                id:                 analyzeButton
-                anchors.top:        parent.top
-                anchors.bottom:     parent.bottom
-                exclusiveGroup:     mainActionGroup
-                source:             "/qmlimages/Analyze.svg"
-                visible:            !ScreenTools.isMobile && QGroundControl.corePlugin.showAdvancedUI
-                onClicked:          toolBar.showAnalyzeView()
             }
 
             Rectangle {
@@ -202,6 +173,13 @@ Rectangle {
             Layout.fillWidth:   true
             Layout.fillHeight:  true
             Layout.margins:     ScreenTools.defaultFontPixelHeight * 0.66
+        }
+
+        QGCButton{
+            visible:                true
+            text:                   qsTr("Add/Delete Link")
+            primary:                true
+            onClicked:              toolBar.addDeleteLink()
         }
     }
 

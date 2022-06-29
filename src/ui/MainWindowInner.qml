@@ -33,12 +33,11 @@ Item {
     property var    activeVehicle:      QGroundControl.multiVehicleManager.activeVehicle
     property string formatedMessage:    activeVehicle ? activeVehicle.formatedMessage : ""
 
-    property var _viewList: [ settingsViewLoader, setupViewLoader, planViewLoader, flightView, analyzeViewLoader ]
+    property var _viewList: [setupViewLoader, planViewLoader, flightView]
 
-    readonly property string _settingsViewSource:   "AppSettings.qml"
     readonly property string _setupViewSource:      "SetupView.qml"
     readonly property string _planViewSource:       "PlanView.qml"
-    readonly property string _analyzeViewSource:    "AnalyzeView.qml"
+    readonly property string _commonLinkSource:     "LinkSettings.qml"
 
     onHeightChanged: {
         //-- We only deal with the available height if within the Fly or Plan view
@@ -62,20 +61,10 @@ Item {
         planToolBar.visible = false
     }
 
-    function showSettingsView() {
-        mainWindow.enableToolbar()
-        rootLoader.sourceComponent = null
-        if(currentPopUp) {
-            currentPopUp.close()
-        }
-        //-- In settings view, the full height is available. Set to 0 so it is ignored.
-        ScreenTools.availableHeight = 0
-        hideAllViews()
-        if (settingsViewLoader.source != _settingsViewSource) {
-            settingsViewLoader.source  = _settingsViewSource
-        }
-        settingsViewLoader.visible  = true
-        toolBar.checkSettingsButton()
+    function showCommonLinkPage(){
+        if(commomLinkLoader.source != _commonLinkSource)
+            commomLinkLoader.source = _commonLinkSource
+        commomLinkLoader.visible = !commomLinkLoader.visible
     }
 
     function showSetupView() {
@@ -106,7 +95,7 @@ Item {
         ScreenTools.availableHeight = parent.height - toolBar.height
         hideAllViews()
         planViewLoader.visible = true
-        planToolBar.visible = true
+//        planToolBar.visible = true
     }
 
     function showFlyView() {
@@ -121,20 +110,6 @@ Item {
         toolBar.checkFlyButton()
     }
 
-    function showAnalyzeView() {
-        mainWindow.enableToolbar()
-        rootLoader.sourceComponent = null
-        if(currentPopUp) {
-            currentPopUp.close()
-        }
-        ScreenTools.availableHeight = 0
-        if (analyzeViewLoader.source  != _analyzeViewSource) {
-            analyzeViewLoader.source  = _analyzeViewSource
-        }
-        hideAllViews()
-        analyzeViewLoader.visible = true
-        toolBar.checkAnalyzeButton()
-    }
 
     /// Start the process of closing QGroundControl. Prompts the user are needed.
     function attemptWindowClose() {
@@ -257,8 +232,6 @@ Item {
             currentPopUp.close()
         }
         if(oldIndicator !== dropItem) {
-            //console.log(oldIndicator)
-            //console.log(dropItem)
             indicatorDropdown.centerX = centerX
             indicatorDropdown.sourceComponent = dropItem
             indicatorDropdown.visible = true
@@ -279,12 +252,11 @@ Item {
         z:                  QGroundControl.zOrderTopMost
 
         Component.onCompleted:  ScreenTools.availableHeight = parent.height - toolBar.height
-        onShowSettingsView:     mainWindow.showSettingsView()
         onShowSetupView:        mainWindow.showSetupView()
         onShowPlanView:         mainWindow.showPlanView()
         onShowFlyView:          mainWindow.showFlyView()
-        onShowAnalyzeView:      mainWindow.showAnalyzeView()
         onArmVehicle:           flightView.guidedController.confirmAction(flightView.guidedController.actionArm)
+        onAddDeleteLink:        mainWindow.showCommonLinkPage()
         onDisarmVehicle: {
             if (flightView.guidedController.showEmergenyStop) {
                 flightView.guidedController.confirmAction(flightView.guidedController.actionEmergencyStop)
@@ -312,26 +284,21 @@ Item {
         z:                  toolBar.z + 1
 
         onShowFlyView: {
-            planToolBar.visible = false
+//            planToolBar.visible = false
             mainWindow.showFlyView()
         }
     }
 
     Loader {
-        id:                 settingsViewLoader
+        id:                 commomLinkLoader
         anchors.left:       parent.left
         anchors.right:      parent.right
         anchors.top:        toolBar.bottom
         anchors.bottom:     parent.bottom
         visible:            false
-/*
-        onVisibleChanged: {
-            if (!visible) {
-                // Free up the memory for this when not shown. No need to persist.
-                source = ""
-            }
-        }*/
+        z:                  toolBar.z
     }
+
 
     Loader {
         id:                 setupViewLoader
@@ -363,15 +330,6 @@ Item {
             id:             rootVideoLoader
             anchors.centerIn: parent
         }
-    }
-
-    Loader {
-        id:                 analyzeViewLoader
-        anchors.left:       parent.left
-        anchors.right:      parent.right
-        anchors.top:        toolBar.bottom
-        anchors.bottom:     parent.bottom
-        visible:            false
     }
 
     //-------------------------------------------------------------------------

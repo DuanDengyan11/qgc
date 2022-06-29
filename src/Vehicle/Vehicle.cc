@@ -77,6 +77,33 @@ const char* Vehicle::_temperatureFactGroupName =    "temperature";
 const char* Vehicle::_clockFactGroupName =          "clock";
 const char* Vehicle::_distanceSensorFactGroupName = "distanceSensor";
 
+
+double Vehicle:: gpsSlingx = 0.0;
+double Vehicle:: gpsSlingy = 0.0;
+double Vehicle:: gpsSlingz  = 0.0;
+double Vehicle:: headingSling = 0.0;
+double Vehicle:: missionSlingx = 0.0;
+double Vehicle:: missionSlingy = 0.0;
+double Vehicle:: missionSlingz = 0.0;
+int Vehicle::mission_number = 0;
+
+quint16 Vehicle::connectedVehicleCount = 0;
+//http://www.sioe.cn/yingyong/yanse-rgb-16/
+QList<QColor> Vehicle::trajectoryColors = {
+    QColor(0x00, 0x00, 0x00),    //black unused
+    QColor(0xFF, 0xFF, 0x00),   //Yellow
+    QColor(0xFF, 0x00, 0x00),    //red
+    QColor(0xFF, 0x8C, 0x00),    //DarkOrange
+    QColor(0xFF, 0x45, 0x00),    //OrangeRed
+    QColor(0xD2, 0x69, 0x1E),    //Chocolate
+    QColor(0xFA, 0x80, 0x72),    //Salmon
+    QColor(0x8B, 0x00, 0x00),    //DarkRed
+    QColor(0xDA, 0xA5, 0x20),    //GoldEnrod
+    QColor(0xFF, 0x00, 0xFF),    //Magenta
+    QColor(0x94, 0x00, 0xD3),    //DarkVoilet
+};
+QMap<int, int>  Vehicle::vehicleIdAndConnectedSeq;
+
 Vehicle::Vehicle(LinkInterface*             link,
                  int                        vehicleId,
                  int                        defaultComponentId,
@@ -195,6 +222,24 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _clockFactGroup(this)
     , _distanceSensorFactGroup(this)
 {
+    Vehicle::connectedVehicleCount++;
+    if(Vehicle::vehicleIdAndConnectedSeq.isEmpty()){
+        Vehicle::vehicleIdAndConnectedSeq.insert(_id, Vehicle::connectedVehicleCount);
+    }else{
+        QMap<int, int>::iterator tmp;
+        int querySeq = 1;
+        bool found = false;
+        for(tmp=Vehicle::vehicleIdAndConnectedSeq.begin();tmp != Vehicle::vehicleIdAndConnectedSeq.end();tmp++){
+            if(tmp.value() != querySeq){
+                found = true;
+                Vehicle::vehicleIdAndConnectedSeq.insert(_id, querySeq);
+                break;
+            }
+            querySeq++;
+        }
+        if(!found)
+           Vehicle::vehicleIdAndConnectedSeq.insert(_id, Vehicle::connectedVehicleCount);
+    }
     connect(_joystickManager, &JoystickManager::activeJoystickChanged, this, &Vehicle::_loadSettings);
     connect(qgcApp()->toolbox()->multiVehicleManager(), &MultiVehicleManager::activeVehicleAvailableChanged, this, &Vehicle::_loadSettings);
 
@@ -467,6 +512,8 @@ void Vehicle::_commonInit(void)
 Vehicle::~Vehicle()
 {
     qCDebug(VehicleLog) << "~Vehicle" << this;
+    Vehicle::connectedVehicleCount--;
+    Vehicle::vehicleIdAndConnectedSeq.take(_id);
 
     delete _missionManager;
     _missionManager = NULL;
@@ -865,6 +912,8 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
     }
     // truncate to integer so widget never displays 360
     yaw = trunc(yaw);
+
+    yaw_sling = yaw;
 
     _rollFact.setRawValue(roll);
     _pitchFact.setRawValue(pitch);
@@ -2775,6 +2824,102 @@ void Vehicle::guidedModeGotoLocation(const QGeoCoordinate& gotoCoord)
     _firmwarePlugin->guidedModeGotoLocation(this, gotoCoord);
 }
 
+
+
+bool Vehicle::my_sling1(void)
+{
+
+    double coordinate1_lat = missionSlingx + length_cable*sin(alpha_cable) * cos(headingSling - M_PI/2.0)/111000;
+    double coordinate1_lon = missionSlingy + length_cable*sin(alpha_cable) * sin(headingSling - M_PI/2.0)/ (111000 * cos( gpsSlingx * M_PI /180) );
+    double coordinate1_alt = missionSlingz + length_cable*cos(alpha_cable);
+    const  QGeoCoordinate gotoCoord1(coordinate1_lat,coordinate1_lon,coordinate1_alt);
+
+    qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate1_lat,0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate1_lon,0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate1_alt,0,'f',6);
+    qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate().latitude(),0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate().longitude(),0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate().altitude(),0,'f',6);
+    qDebug()<<"id"<<_id<<"distance"<<coordinate().distanceTo(gotoCoord1);
+    _firmwarePlugin->guidedModeGotoLocation(this, gotoCoord1);
+    if (coordinate().distanceTo(gotoCoord1) < distance_tolerate)
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+
+    // Just for Test
+//        qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate1_lat,0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate1_lon,0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate1_alt,0,'f',6);
+//        return false;
+
+}
+
+bool Vehicle::my_sling2(void)
+{
+    double coordinate1_lat = missionSlingx + length_cable*sin(alpha_cable) * cos(headingSling + M_PI/2.0)/111000;
+    double coordinate1_lon = missionSlingy + length_cable*sin(alpha_cable) * sin(headingSling + M_PI/2.0)/ (111000 * cos( gpsSlingx * M_PI /180) );
+    double coordinate1_alt = missionSlingz + length_cable*cos(alpha_cable);
+    const  QGeoCoordinate gotoCoord1(coordinate1_lat,coordinate1_lon,coordinate1_alt);
+
+    qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate1_lat,0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate1_lon,0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate1_alt,0,'f',6);
+    qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate().latitude(),0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate().longitude(),0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate().altitude(),0,'f',6);
+    qDebug()<<"id"<<_id<<"distance"<<coordinate().distanceTo(gotoCoord1);
+    _firmwarePlugin->guidedModeGotoLocation(this, gotoCoord1);
+    if (coordinate().distanceTo(gotoCoord1) < distance_tolerate)
+    {
+        return false;
+    }else
+    {
+        return true;
+    }
+
+    // Just for Test
+//      qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(coordinate1_lat,0,'f',6)<<"gps_lon"<<QString("%1").arg(coordinate1_lon,0,'f',6)<<"gps_alt"<<QString("%1").arg(coordinate1_alt,0,'f',6);
+//        return false;
+}
+
+bool Vehicle::get_mission(void)
+{
+    // Go forward 10 meters, and then go back 10 meters
+    // reference: the initial position of the load
+
+    double mission_sling[3][3] = {0.0, 0.0, 5.0, 25.0, 0.0, 5.0, 0.0, 0.0, 5.0};
+
+    Vehicle::missionSlingx = gpsSlingx + mission_sling[mission_number][0] * cos(headingSling) /111000;
+    Vehicle::missionSlingy = gpsSlingy + mission_sling[mission_number][0] * sin(headingSling) /(111000 * cos(gpsSlingx *M_PI /180) );
+    Vehicle::missionSlingz = gpsSlingz + mission_sling[mission_number][2];
+
+    qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(missionSlingx,0,'f',6)<<"gps_lon"<<QString("%1").arg(missionSlingy,0,'f',6)<<"gps_alt"<<QString("%1").arg(missionSlingz,0,'f',6);
+
+    mission_number++;
+
+    if (mission_number < 3)
+    {
+        return true;
+    }else
+    {
+        mission_number = 0;
+        return false;
+    }
+
+}
+
+// get gps and heading of the load in the initial position
+void Vehicle::get_gps_initial(void)
+{
+     Vehicle:: gpsSlingx = coordinate().latitude();
+     Vehicle:: gpsSlingy = coordinate().longitude();
+     Vehicle:: gpsSlingz  = coordinate().altitude();
+
+     Vehicle:: headingSling = yaw_sling * M_PI /180;   //radian
+
+     Vehicle:: gpsSlingx = 32.032281;
+     Vehicle:: gpsSlingy = 118.81888;
+     Vehicle:: gpsSlingz = 0;
+     Vehicle:: headingSling = 0 *M_PI /180;
+     qDebug()<<"id" << _id <<"gps_lat"<<QString("%1").arg(gpsSlingx,0,'f',6)<<"gps_lon"<<QString("%1").arg(gpsSlingy,0,'f',6)<<"gps_alt"<<QString("%1").arg(gpsSlingz,0,'f',6);
+     qDebug()<<"id" << _id <<"yaw_deg" << yaw_sling << "yaw_radian" << headingSling;
+}
+
+
 void Vehicle::guidedModeChangeAltitude(double altitudeChange)
 {
     if (!guidedModeSupported()) {
@@ -3530,6 +3675,15 @@ void Vehicle::_updateHighLatencyLink(bool sendCommand)
     }
 }
 
+QColor Vehicle::trajectoryColor()
+{
+    if(Vehicle::connectedVehicleCount < Vehicle::trajectoryColors.count()){
+        return Vehicle::trajectoryColors.at(Vehicle::vehicleIdAndConnectedSeq.find(_id).value());
+    }else{
+        //generate a color you can make it better
+        return QColor(0xFF,Vehicle::connectedVehicleCount * 0xF, Vehicle::connectedVehicleCount * 8);
+    }
+}
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 

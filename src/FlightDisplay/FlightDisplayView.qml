@@ -476,6 +476,7 @@ QGCView {
             width:              ScreenTools.defaultFontPixelWidth * 30
             visible:            !singleVehicleView.checked && !QGroundControl.videoManager.fullScreen
             z:                  _panel.z + 4
+            guidedActionsController:guidedActionsController
         }
 
         //-- Virtual Joystick

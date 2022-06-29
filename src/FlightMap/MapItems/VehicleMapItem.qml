@@ -33,7 +33,7 @@ MapQuickItem {
     property real   _uavSize:       ScreenTools.defaultFontPixelHeight * 5
     property real   _adsbSize:      ScreenTools.defaultFontPixelHeight * 1.5
     property var    _map:           map
-    property bool   _multiVehicle:  QGroundControl.multiVehicleManager.vehicles.count > 1
+    property bool   _multiVehicle:  QGroundControl.multiVehicleManager.vehicles.count > 0
 
     sourceItem: Item {
         id:         vehicleItem
@@ -58,8 +58,7 @@ MapQuickItem {
 
         QGCMapLabel {
             id:                         vehicleLabel
-            anchors.top:                parent.bottom
-            anchors.horizontalCenter:   parent.horizontalCenter
+            anchors.centerIn:           parent
             map:                        _map
             text:                       vehicleLabelText
             font.pointSize:             ScreenTools.smallFontPointSize
@@ -68,7 +67,7 @@ MapQuickItem {
             property string vehicleLabelText: visible ?
                                                   (_adsbVehicle ?
                                                        QGroundControl.metersToAppSettingsDistanceUnits(altitude).toFixed(0) + " " + QGroundControl.appSettingsDistanceUnitsString :
-                                                       (_multiVehicle ? qsTr("Vehicle %1").arg(vehicle.id) : "")) :
+                                                       (_multiVehicle ? qsTr("%1").arg(vehicle.id) : "")) :
                                                   ""
 
         }

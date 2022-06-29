@@ -29,7 +29,6 @@ class QGCImageProvider;
 class UASMessageHandler;
 class QGCPositionManager;
 class VideoManager;
-class MAVLinkLogManager;
 class QGCCorePlugin;
 class SettingsManager;
 
@@ -53,7 +52,6 @@ public:
     FollowMe*                   followMe(void)                  { return _followMe; }
     QGCPositionManager*         qgcPositionManager(void)        { return _qgcPositionManager; }
     VideoManager*               videoManager(void)              { return _videoManager; }
-    MAVLinkLogManager*          mavlinkLogManager(void)         { return _mavlinkLogManager; }
     QGCCorePlugin*              corePlugin(void)                { return _corePlugin; }
     SettingsManager*            settingsManager(void)           { return _settingsManager; }
 
@@ -83,7 +81,6 @@ private:
     FollowMe*                   _followMe;
     QGCPositionManager*         _qgcPositionManager;
     VideoManager*               _videoManager;
-    MAVLinkLogManager*          _mavlinkLogManager;
     QGCCorePlugin*              _corePlugin;
     SettingsManager*            _settingsManager;
 

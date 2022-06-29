@@ -25,7 +25,6 @@
 #include "FollowMe.h"
 #include "PositionManager.h"
 #include "VideoManager.h"
-#include "MAVLinkLogManager.h"
 #include "QGCCorePlugin.h"
 #include "QGCOptions.h"
 #include "SettingsManager.h"
@@ -53,7 +52,6 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     , _followMe(NULL)
     , _qgcPositionManager(NULL)
     , _videoManager(NULL)
-    , _mavlinkLogManager(NULL)
     , _corePlugin(NULL)
     , _settingsManager(NULL)
 {
@@ -79,7 +77,6 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
     _qgcPositionManager =       new QGCPositionManager      (app, this);
     _followMe =                 new FollowMe                (app, this);
     _videoManager =             new VideoManager            (app, this);
-    _mavlinkLogManager =        new MAVLinkLogManager       (app, this);
 }
 
 void QGCToolbox::setChildToolboxes(void)
@@ -105,7 +102,6 @@ void QGCToolbox::setChildToolboxes(void)
     _followMe->setToolbox(this);
     _qgcPositionManager->setToolbox(this);
     _videoManager->setToolbox(this);
-    _mavlinkLogManager->setToolbox(this);
 }
 
 void QGCToolbox::_scanAndLoadPlugins(QGCApplication* app)

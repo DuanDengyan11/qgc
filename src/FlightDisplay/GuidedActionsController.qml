@@ -27,6 +27,42 @@ import QGroundControl.FlightMap                 1.0
 Item {
     id: _root
 
+    //**************************** command selected vehicle to do something we want start**************************
+    property var selectedVehicleList: []
+    function selectedVehicleCtl(id, insert)
+    {
+        //@param    id :vehicle's       id 0: all
+        //@param    insert              0:remove    1:insert
+        if(id === 0){
+            var i;
+            if(insert){
+                selectedVehicleList = []
+                var vehicles = QGroundControl.multiVehicleManager.vehicles
+                for(i = 0; i < vehicles.count;i++){
+                    selectedVehicleList.push(vehicles.get(i).id)
+                }
+            }else{
+                selectedVehicleList = []
+            }
+        }else{
+            var found = false
+            var tmp = []
+            for(i = 0; i < selectedVehicleList.length; i++){
+                if(selectedVehicleList[i] === id){
+                    if(!insert)
+                        continue;
+                    tmp.push(selectedVehicleList[i])
+                    found = true
+                }else{
+                    tmp.push(selectedVehicleList[i])
+                }
+            }
+            selectedVehicleList = tmp
+            if(!found && insert)
+                selectedVehicleList.push(id)
+        }
+    }
+    //*****************************command selected vehicle to do something we want end*****************************
     property var missionController
     property var confirmDialog
     property var actionList
@@ -94,6 +130,15 @@ Item {
     readonly property int actionVtolTransitionToFwdFlight:  20
     readonly property int actionVtolTransitionToMRFlight:   21
 
+    readonly property int actionMVArm:                      22
+    readonly property int actionMVDisarm:                   23
+    readonly property int actionMVRTL:                      24
+    readonly property int actionMVTakeoff:                  25
+    readonly property int actionMVLand:                     26
+    readonly property int actionMVEmergencyStop:            27
+    readonly property int actionSlingGuided:                28
+    readonly property int actionSlingTakeoff:               29
+
     property bool showEmergenyStop:     _guidedActionsEnabled && !_hideEmergenyStop && _vehicleArmed && _vehicleFlying
     property bool showArm:              _guidedActionsEnabled && !_vehicleArmed
     property bool showDisarm:           _guidedActionsEnabled && _vehicleArmed && !_vehicleFlying
@@ -125,6 +170,9 @@ Item {
     property bool   _vehicleInMissionMode:  false
     property bool   _vehicleInRTLMode:      false
     property bool   _vehicleInLandMode:     false
+    property bool    rem1:                  false
+    property bool    rem2:                  false
+    property bool    rem_sling:             true
     property int    _currentMissionIndex:   missionController.currentMissionIndex
     property int    _resumeMissionIndex:    missionController.resumeMissionIndex
     property bool   _hideEmergenyStop:      !QGroundControl.corePlugin.options.guidedBarShowEmergencyStop
@@ -245,8 +293,8 @@ Item {
             confirmDialog.hideTrigger = Qt.binding(function() { return !showStartMission })
             break;
         case actionMVStartMission:
-            confirmDialog.title = startMissionTitle
-            confirmDialog.message = startMissionMessage
+            confirmDialog.title = qsTr("All start Mission")
+            confirmDialog.message = qsTr("Command all vehicles to start mission")
             confirmDialog.hideTrigger = true
             break;
         case actionContinueMission:
@@ -317,7 +365,7 @@ Item {
             altitudeSlider.visible = true
             break;
         case actionMVPause:
-            confirmDialog.title = pauseTitle
+            confirmDialog.title = qsTr("All Pause")
             confirmDialog.message = mvPauseMessage
             confirmDialog.hideTrigger = true
             break;
@@ -331,6 +379,46 @@ Item {
             confirmDialog.message = vtolTransitionMRMessage
             confirmDialog.hideTrigger = true
             break
+        case actionMVArm:
+            confirmDialog.title = qsTr("All arm")
+            confirmDialog.message = qsTr("Command all vehicles to arm")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionMVDisarm:
+            confirmDialog.title = qsTr("All disarm")
+            confirmDialog.message = qsTr("Command all vehicles to disarm")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionMVTakeoff:
+            confirmDialog.title = qsTr("All takeoff")
+            confirmDialog.message = qsTr("Command all vehicles to takeoff")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionMVRTL:
+            confirmDialog.title = qsTr("All RTL")
+            confirmDialog.message = qsTr("Command all vehicles to RTL")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionMVLand:
+            confirmDialog.title = qsTr("All Land")
+            confirmDialog.message = qsTr("Command all vehicles to Land")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionMVEmergencyStop:
+            confirmDialog.title = qsTr("All Emergency Stop")
+            confirmDialog.message = qsTr("Command all vehicles to Emergency Stop")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionSlingGuided:
+            confirmDialog.title = qsTr("All Sling Guided")
+            confirmDialog.message = qsTr("Command all vehicles to sling load in guided mode")
+            confirmDialog.hideTrigger = true;
+            break;
+        case actionSlingTakeoff:
+            confirmDialog.title = qsTr("All Sling Takeoff")
+            confirmDialog.message = qsTr("Command all sling vehicles to takeoff in guided mode")
+            confirmDialog.hideTrigger = true;
+            break;
         default:
             console.warn("Unknown actionCode", actionCode)
             return
@@ -340,8 +428,10 @@ Item {
 
     // Executes the specified action
     function executeAction(actionCode, actionData, actionAltitudeChange) {
-        var i;
+        var i, j;
         var rgVehicle;
+        var vehicle;
+
         switch (actionCode) {
         case actionRTL:
             _activeVehicle.guidedModeRTL()
@@ -401,8 +491,142 @@ Item {
             break
         case actionMVPause:
             rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.pauseVehicle()
+                        break;
+                    }
+                }
+            }
+            break
+        case actionMVArm:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.armed = true
+                        break;
+                    }
+                }
+            }
+            break
+        case actionMVDisarm:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.armed = false
+                        break;
+                    }
+                }
+            }
+            break
+        case actionMVLand:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.guidedModeLand()
+                        break;
+                    }
+                }
+            }
+            break
+        case actionMVRTL:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.guidedModeRTL()
+                        break;
+                    }
+                }
+            }
+            break
+        case actionMVTakeoff:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.guidedModeTakeoff(actionAltitudeChange)
+                        break;
+                    }
+                }
+            }
+            break;
+        case actionMVEmergencyStop:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+            for(j = 0; j < selectedVehicleList.length;j++){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                    if(selectedVehicleList[j] === vehicle.id){
+                        vehicle.emergencyStop()
+                        break;
+                    }
+                }
+            }
+            break
+
+
+
+        case actionSlingGuided:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+
+
             for (i = 0; i < rgVehicle.count; i++) {
-                rgVehicle.get(i).pauseVehicle()
+                vehicle = rgVehicle.get(i)
+             if(vehicle.id === 3 ){
+                   vehicle.get_gps_initial()
+              }
+             }
+
+            rem_sling = true;
+
+            while(rem_sling){
+                for (i = 0; i < rgVehicle.count; i++) {
+                    vehicle = rgVehicle.get(i)
+                 if(vehicle.id === 3 ){
+                       rem_sling = vehicle.get_mission()
+                  }
+                 }
+
+                rem1 = true;
+                rem2 = true;
+
+                while(rem1 || rem2)
+                {
+                    for (i = 0; i < rgVehicle.count; i++) {
+                        vehicle = rgVehicle.get(i)
+                     if(vehicle.id === 1 ){
+                          rem1  = vehicle.my_sling1()}
+
+                     if(vehicle.id === 2){
+                         rem2 = vehicle.my_sling2()}
+                     }
+                }
+            }
+
+            for (i = 0; i < rgVehicle.count; i++) {
+                vehicle = rgVehicle.get(i)
+                vehicle.guidedModeLand()
+            }
+
+            break
+
+        case actionSlingTakeoff:
+            rgVehicle = QGroundControl.multiVehicleManager.vehicles
+
+            //Takeoff 5m
+            for (i = 0; i < rgVehicle.count; i++) {
+                vehicle = rgVehicle.get(i)
+                vehicle.guidedModeTakeoff(5.0)
             }
             break
         case actionVtolTransitionToFwdFlight:
