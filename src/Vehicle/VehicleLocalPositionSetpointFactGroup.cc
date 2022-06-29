@@ -18,6 +18,8 @@ const char* VehicleLocalPositionSetpointFactGroup::_zFactName =     "z";
 const char* VehicleLocalPositionSetpointFactGroup::_vxFactName =    "vx";
 const char* VehicleLocalPositionSetpointFactGroup::_vyFactName =    "vy";
 const char* VehicleLocalPositionSetpointFactGroup::_vzFactName =    "vz";
+const char* VehicleLocalPositionSetpointFactGroup::_accltzFactName =    "accltz";
+const char* VehicleLocalPositionSetpointFactGroup::_acclzFactName =    "acclz";
 
 VehicleLocalPositionSetpointFactGroup::VehicleLocalPositionSetpointFactGroup(QObject* parent)
     : FactGroup     (1000, ":/json/Vehicle/LocalPositionSetpointFact.json", parent)
@@ -27,13 +29,16 @@ VehicleLocalPositionSetpointFactGroup::VehicleLocalPositionSetpointFactGroup(QOb
     , _vxFact   (0, _vxFactName,    FactMetaData::valueTypeDouble)
     , _vyFact   (0, _vyFactName,    FactMetaData::valueTypeDouble)
     , _vzFact   (0, _vzFactName,    FactMetaData::valueTypeDouble)
+    , _accltzFact (0, _accltzFactName,    FactMetaData::valueTypeDouble)
+    , _acclzFact (0, _acclzFactName,    FactMetaData::valueTypeDouble)
 {
     _addFact(&_xFact,      _xFactName);
     _addFact(&_yFact,      _yFactName);
     _addFact(&_zFact,      _zFactName);
     _addFact(&_vxFact,     _vxFactName);
     _addFact(&_vyFact,     _vyFactName);
-    _addFact(&_vzFact,     _vzFactName);
+    _addFact(&_accltzFact,     _accltzFactName);
+    _addFact(&_acclzFact,     _acclzFactName);
 
     // Start out as not available "--.--"
     _xFact.setRawValue(qQNaN());
@@ -42,6 +47,8 @@ VehicleLocalPositionSetpointFactGroup::VehicleLocalPositionSetpointFactGroup(QOb
     _vxFact.setRawValue(qQNaN());
     _vyFact.setRawValue(qQNaN());
     _vzFact.setRawValue(qQNaN());
+    _accltzFact.setRawValue(qQNaN());
+    _acclzFact.setRawValue(qQNaN());
 }
 
 void VehicleLocalPositionSetpointFactGroup::handleMessage(Vehicle* /* vehicle */, mavlink_message_t& message)
@@ -60,6 +67,9 @@ void VehicleLocalPositionSetpointFactGroup::handleMessage(Vehicle* /* vehicle */
     vx()->setRawValue(localPosition.vx);
     vy()->setRawValue(localPosition.vy);
     vz()->setRawValue(localPosition.vz);
+
+    accltz()->setRawValue(localPosition.afx);  //for pid tuning target_accel_z
+    acclz()->setRawValue(localPosition.afy); // for pid tuning accel_z
 
     _setTelemetryAvailable(true);
 }

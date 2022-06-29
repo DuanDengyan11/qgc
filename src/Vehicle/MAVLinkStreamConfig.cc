@@ -17,7 +17,7 @@ MAVLinkStreamConfig::MAVLinkStreamConfig(const SetMessageIntervalCb &messageInte
 
 void MAVLinkStreamConfig::setHighRateRateAndAttitude()
 {
-    int requestedRate = (int)(1000000.0 / 100.0); // 100 Hz in usecs (better set this a bit higher than actually needed,
+    int requestedRate = (int)(1000000.0 / 100000.0); // 100 Hz in usecs (better set this a bit higher than actually needed,
     // to give it more priority in case of exceeding link bandwidth)
 
     _nextDesiredRates = QVector<DesiredStreamRate>{{
@@ -31,7 +31,7 @@ void MAVLinkStreamConfig::setHighRateRateAndAttitude()
 
 void MAVLinkStreamConfig::setHighRateVelAndPos()
 {
-    int requestedRate = (int)(1000000.0 / 100.0);
+    int requestedRate = (int)(1000000.0 / 100000.0);
     _nextDesiredRates = QVector<DesiredStreamRate>{{
         {MAVLINK_MSG_ID_LOCAL_POSITION_NED, requestedRate},
         {MAVLINK_MSG_ID_POSITION_TARGET_LOCAL_NED, requestedRate},

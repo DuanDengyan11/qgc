@@ -171,7 +171,7 @@ void ParameterManager::mavlinkMessageReceived(mavlink_message_t message)
 {
     if (message.msgid == MAVLINK_MSG_ID_PARAM_VALUE) {
         mavlink_param_value_t param_value;
-        mavlink_msg_param_value_decode(&message, &param_value);
+        mavlink_msg_param_value_decode(&message, &param_value);  //mavlink包解析
 
         // This will null terminate the name string
         QByteArray bytes(param_value.param_id, MAVLINK_MSG_PARAM_VALUE_FIELD_PARAM_ID_LEN);
@@ -217,7 +217,14 @@ void ParameterManager::mavlinkMessageReceived(mavlink_message_t message)
 /// Called whenever a parameter is updated or first seen.
 void ParameterManager::_handleParamValue(int componentId, QString parameterName, int parameterCount, int parameterIndex, MAV_PARAM_TYPE mavParamType, QVariant parameterValue)
 {
-
+    qDebug() <<_logVehiclePrefix(componentId) <<
+                                                        "_parameterUpdate" <<
+                                                        "name:" << parameterName <<
+                                                        "count:" << parameterCount <<
+                                                        "index:" << parameterIndex <<
+                                                        "mavType:" << mavParamType <<
+                                                        "value:" << parameterValue <<
+                                                        ")";
     qCDebug(ParameterManagerVerbose1Log) << _logVehiclePrefix(componentId) <<
                                             "_parameterUpdate" <<
                                             "name:" << parameterName <<
@@ -228,15 +235,15 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
                                             ")";
 
     // ArduPilot has this strange behavior of streaming parameters that we didn't ask for. This even happens before it responds to the
-    // PARAM_REQUEST_LIST. We disregard any of this until the initial request is responded to.
+    // PARAM_REQUEST_LIST. We disregard any of this until the initial request is responded to.ArduPilot有一种奇怪的流参数行为，这是我们没有要求的。这甚至发生在它响应参数请求列表之前。在最初的请求得到响应之前，我们不考虑任何这一点。
     if (parameterIndex == 65535 && parameterName != "_HASH_CHECK" && _initialRequestTimeoutTimer.isActive()) {
         qCDebug(ParameterManagerVerbose1Log) << "Disregarding unrequested param prior to initial list response" << parameterName;
         return;
     }
 
-    _initialRequestTimeoutTimer.stop();
+    _initialRequestTimeoutTimer.stop();  //暂停Qtimer
 
-#if 0
+#if 0  // 此段代码暂时不用 if 1开启
     if (!_initialLoadComplete && !_indexBatchQueueActive) {
         // Handy for testing retry logic
         static int counter = 0;
@@ -256,7 +263,7 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
 
     if (_vehicle->px4Firmware() && parameterName == "_HASH_CHECK") {
         if (!_initialLoadComplete && !_logReplay) {
-            /* we received a cache hash, potentially load from cache */
+            /* we received a cache hash, potentially load from cache 我们收到了一个缓存hash，可能是从缓存加载的*/
             _tryCacheHashLoad(_vehicle->id(), componentId, parameterValue);
         }
         return;
@@ -282,21 +289,21 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
     _initialRequestTimeoutTimer.stop();
     _waitingParamTimeoutTimer.stop();
 
-    // Update our total parameter counts
+    // Update our total parameter counts 更新我们的总参数数目
     if (!_paramCountMap.contains(componentId)) {
         _paramCountMap[componentId] = parameterCount;
         _totalParamCount += parameterCount;
     }
 
-    // If we've never seen this component id before, setup the index wait lists.
+    // If we've never seen this component id before, setup the index wait lists. 若这个component_id第一次读到，加入wait list
     if (!_waitingReadParamIndexMap.contains(componentId)) {
-        // Add all indices to the wait list, parameter index is 0-based
+        // Add all indices to the wait list, parameter index is 0-based 将所有索引添加到等待列表中，参数索引基于0
         for (int waitingIndex=0; waitingIndex<parameterCount; waitingIndex++) {
-            // This will add the new component id, as well as the the new waiting index and set the retry count for that index to 0
+            // This will add the new component id, as well as the the new waiting index and set the retry count for that index to 0 这将添加新的组件id以及新的等待索引，并将该索引的重试次数设置为0
             _waitingReadParamIndexMap[componentId][waitingIndex] = 0;
         }
 
-        // The read and write waiting lists for this component are initialized the empty
+        // The read and write waiting lists for this component are initialized the empty 此组件的读写等待列表初始化为空
         _waitingReadParamNameMap[componentId] = QMap<QString, int>();
         _waitingWriteParamNameMap[componentId] = QMap<QString, int>();
 
@@ -327,7 +334,7 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
         qCDebug(ParameterManagerVerbose2Log) << _logVehiclePrefix(componentId) << "_waitingWriteParamNameMap" << _waitingWriteParamNameMap[componentId];
     }
 
-    // Track how many parameters we are still waiting for
+    // Track how many parameters we are still waiting for跟踪我们仍在等待的参数数量
 
     int waitingReadParamIndexCount = 0;
     int waitingReadParamNameCount = 0;
@@ -829,7 +836,7 @@ void ParameterManager::_tryCacheHashLoad(int vehicleId, int componentId, QVarian
     qCInfo(ParameterManagerLog) << "Attemping load from cache";
 
     uint32_t crc32_value = 0;
-    /* The datastructure of the cache table */
+    /* The datastructure of the cache table缓存表的数据结构 */
     CacheMapName2ParamTypeVal cacheMap;
     QFile cacheFile(parameterCacheFile(vehicleId, componentId));
     if (!cacheFile.exists()) {
@@ -1102,7 +1109,7 @@ void ParameterManager::_checkInitialLoadComplete(void)
 
     for (int componentId: _waitingReadParamIndexMap.keys()) {
         if (_waitingReadParamIndexMap[componentId].count()) {
-            // We are still waiting on some parameters, not done yet
+            // We are still waiting on some parameters, not done yet 仍然在等待一些参数
             return;
         }
     }
@@ -1113,6 +1120,7 @@ void ParameterManager::_checkInitialLoadComplete(void)
     }
 
     // We aren't waiting for any more initial parameter updates, initial parameter loading is complete
+    // 我们不再等待任何初始参数更新，初始参数加载已完成
     _initialLoadComplete = true;
 
     // Parameter cache crc failure debugging
@@ -1154,7 +1162,7 @@ void ParameterManager::_checkInitialLoadComplete(void)
         qgcApp()->showAppMessage(errorMsg);
         if (!qgcApp()->runningUnitTests()) {
             qCWarning(ParameterManagerLog) << _logVehiclePrefix(-1) << "The following parameter indices could not be loaded after the maximum number of retries: " << indexList;
-        }
+        } //在达到最大重试次数后，无法加载以下参数索引
     }
 
     // Signal load complete

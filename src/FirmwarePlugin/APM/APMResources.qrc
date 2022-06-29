@@ -28,6 +28,12 @@
         <file alias="APMSensorsComponent.qml">../../AutoPilotPlugins/APM/APMSensorsComponent.qml</file>
         <file alias="APMSensorsComponentSummary.qml">../../AutoPilotPlugins/APM/APMSensorsComponentSummary.qml</file>
         <file alias="APMTuningComponentCopter.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopter.qml</file>
+        <file alias="APMTuningComponentCopterAll.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterAll.qml</file>
+        <file alias="APMTuningComponentCopterRate.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterRate.qml</file>
+        <file alias="APMTuningComponentCopterAttitude.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterAttitude.qml</file>
+        <file alias="APMTuningComponentCopterPosition.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterPosition.qml</file>
+        <file alias="APMTuningComponentCopterVelocity.qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterVelocity.qml</file>
+        <file alias="APMTuningComponentCopterAccelz..qml">../../AutoPilotPlugins/APM/APMTuningComponentCopterAccelz.qml</file>
         <file alias="APMTuningComponentSub.qml">../../AutoPilotPlugins/APM/APMTuningComponentSub.qml</file>
         <file alias="QGroundControl/ArduPilot/APMSensorParams.qml">APMSensorParams.qml</file>
         <file alias="QGroundControl/ArduPilot/qmldir">QGroundControl.ArduPilot.qmldir</file>

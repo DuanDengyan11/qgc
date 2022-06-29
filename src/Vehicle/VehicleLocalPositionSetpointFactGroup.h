@@ -25,6 +25,8 @@ public:
     Q_PROPERTY(Fact* vx    READ vx   CONSTANT)
     Q_PROPERTY(Fact* vy    READ vy   CONSTANT)
     Q_PROPERTY(Fact* vz    READ vz   CONSTANT)
+    Q_PROPERTY(Fact* accltz    READ accltz   CONSTANT)
+    Q_PROPERTY(Fact* acclz    READ acclz   CONSTANT)
 
     Fact* x    () { return &_xFact; }
     Fact* y    () { return &_yFact; }
@@ -32,7 +34,8 @@ public:
     Fact* vx   () { return &_vxFact; }
     Fact* vy   () { return &_vyFact; }
     Fact* vz   () { return &_vzFact; }
-
+    Fact* accltz   () { return &_accltzFact; }
+    Fact* acclz   () { return &_acclzFact; }
     // Overrides from FactGroup
     void handleMessage(Vehicle* vehicle, mavlink_message_t& message) override;
 
@@ -42,6 +45,8 @@ public:
     static const char* _vxFactName;
     static const char* _vyFactName;
     static const char* _vzFactName;
+    static const char* _accltzFactName;
+    static const char* _acclzFactName;
 
 private:
     Fact _xFact;
@@ -50,4 +55,6 @@ private:
     Fact _vxFact;
     Fact _vyFact;
     Fact _vzFact;
+    Fact _accltzFact;
+    Fact _acclzFact;
 };

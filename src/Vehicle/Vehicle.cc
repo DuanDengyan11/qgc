@@ -3035,7 +3035,8 @@ void Vehicle::_handleCommandAck(mavlink_message_t& message)
                         qgcApp()->showAppMessage(tr("%1 command not supported").arg(rawCommandName));
                         break;
                     case MAV_RESULT_FAILED:
-                        qgcApp()->showAppMessage(tr("%1 command failed").arg(rawCommandName));
+                        //不注释的话apm地面站pid调参老是报错很烦人
+//                        qgcApp()->showAppMessage(tr("%1 command failed").arg(rawCommandName));
                         break;
                     default:
                         // Do nothing
